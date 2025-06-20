@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Fichas - Chainsaw Man RPG</title>
+    <style>
+        :root {
+            --blood-red: #c00000;
+            --dark-gray: #222222;
+            --light-gray: #f0f0f0;
+            --gold: #ffd700;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-gray);
+            color: var(--light-gray);
+            line-height: 1.6;
+            background-image: url('https://i.imgur.com/JqYeZ7T.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-bottom: 3px solid var(--blood-red);
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        h1 {
+            color: var(--blood-red);
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 900;
+        }
+        
+        .subtitle {
+            color: var(--gold);
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(192, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-left: 4px solid var(--blood-red);
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 0 10px 10px 0;
+        }
+        
+        h2 {
+            color: var(--blood-red);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gold);
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: rgba(50, 50, 50, 0.8);
+            border: 1px solid var(--blood-red);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 5px var(--gold);
+        }
+        
+        .attribute-points {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .attribute-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .attribute-control button {
+            background-color: var(--blood-red);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .attribute-control button:hover {
+            background-color: var(--gold);
+            color: black;
+        }
+        
+        .attribute-control input {
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .points-remaining {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: var(--gold);
+        }
+        
+        .weapon-card, .demon-card {
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border-left: 3px solid var(--blood-red);
+        }
+        
+        .add-button {
+            background-color: var(--blood-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: block;
+            margin: 1rem 0;
+        }
+        
+        .add-button:hover {
+            background-color: var(--gold);
+            color: black;
+        }
+        
+        .character-sheet {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            margin-top: 2rem;
+            border-radius: 10px;
+            border: 2px solid var(--blood-red);
+        }
+        
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 1rem;
+        }
+        
+        .character-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--blood-red);
+            object-fit: cover;
+            background-color: #333;
+        }
+        
+        .character-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background-color: rgba(192, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            color: var(--gold);
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: var(--light-gray);
+        }
+        
+        .print-button {
+            background-color: var(--gold);
+            color: black;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: block;
+            margin: 2rem auto;
+        }
+        
+        .print-button:hover {
+            background-color: var(--blood-red);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .attribute-points {
+                grid-template-columns: 1fr;
+            }
+            
+            .character-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CRIADOR DE FICHAS</h1>
+        <p class="subtitle">Chainsaw Man RPG - Faça seu Caçador de Demônios</p>
+    </header>
+    
+    <div class="container">
+        <form id="character-form">
+            <div class="form-section">
+                <h2>Informações Básicas</h2>
+                <div class="form-group">
+                    <label for="character-name">Nome do Personagem</label>
+                    <input type="text" id="character-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="character-origin">Origem</label>
+                    <select id="character-origin" required>
+                        <option value="">Selecione uma origem</option>
+                        <option value="ruas">Sobrevivente das Ruas (+1 AGI, +1 VIG)</option>
+                        <option value="yakuza">Ex-Membro da Yakuza (+1 FOR, +1 PRE)</option>
+                        <option value="estudante">Estudante com Dívida (+1 INT, +1 SOR)</option>
+                        <option value="ex-cacador">Ex-Caçador de Demônios (+1 em qualquer atributo)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="character-image">Imagem do Personagem (URL)</label>
+                    <input type="text" id="character-image" placeholder="Cole o link de uma imagem">
+                </div>
+                <div class="form-group">
+                    <label for="character-backstory">História do Personagem</label>
+                    <textarea id="character-backstory" rows="4"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Atributos</h2>
+                <div class="points-remaining">
+                    Pontos restantes: <span id="remaining-points">12</span>/12
+                </div>
+                <div class="attribute-points">
+                    <div class="form-group">
+                        <label>Força (FOR)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="for">-</button>
+                            <input type="number" id="for" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="for">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Agilidade (AGI)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="agi">-</button>
+                            <input type="number" id="agi" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="agi">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Vigor (VIG)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="vig">-</button>
+                            <input type="number" id="vig" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="vig">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Intelecto (INT)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="int">-</button>
+                            <input type="number" id="int" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="int">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Presença (PRE)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="pre">-</button>
+                            <input type="number" id="pre" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="pre">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Sorte (SOR)</label>
+                        <div class="attribute-control">
+                            <button type="button" class="decrease-attr" data-attr="sor">-</button>
+                            <input type="number" id="sor" value="1" min="1" max="4" readonly>
+                            <button type="button" class="increase-attr" data-attr="sor">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Classe e Contrato Demoníaco</h2>
+                <div class="form-group">
+                    <label for="character-class">Classe</label>
+                    <select id="character-class" required>
+                        <option value="">Selecione uma classe</option>
+                        <option value="atirador">Atirador (Armas de longo alcance)</option>
+                        <option value="lutador">Lutador (Combate desarmado)</option>
+                        <option value="guerreiro">Guerreiro (Armas corpo a corpo)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="demon-contract">Contrato Demoníaco</label>
+                    <select id="demon-contract" required>
+                        <option value="">Selecione um demônio</option>
+                        <option value="machado">Demônio do Machado</option>
+                        <option value="cobra">Demônio da Cobra</option>
+                        <option value="fantasma">Demônio do Fantasma</option>
+                        <option value="fogo">Demônio do Fogo</option>
+                        <option value="sangue">Demônio do Sangue</option>
+                        <option value="corrente">Demônio da Corrente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contract-details">Detalhes do Contrato</label>
+                    <textarea id="contract-details" rows="3"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Equipamento</h2>
+                <div id="weapons-container">
+                    <!-- Armas serão adicionadas aqui -->
+                </div>
+                <button type="button" id="add-weapon" class="add-button">+ Adicionar Arma</button>
+                
+                <div class="form-group">
+                    <label for="other-equipment">Outros Equipamentos</label>
+                    <textarea id="other-equipment" rows="2"></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="print-button">Criar Ficha</button>
+        </form>
+        
+        <div id="character-sheet" class="character-sheet" style="display: none;">
+            <div class="sheet-header">
+                <div>
+                    <h2 id="sheet-name">Nome do Personagem</h2>
+                    <p id="sheet-origin-class">Origem • Classe</p>
+                </div>
+                <img id="sheet-image" src="https://i.imgur.com/JqYeZ7T.jpg" alt="Personagem" class="character-image">
+            </div>
+            
+            <div class="character-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-for">1</div>
+                    <div class="stat-label">FORÇA</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-agi">1</div>
+                    <div class="stat-label">AGILIDADE</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-vig">1</div>
+                    <div class="stat-label">VIGOR</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-int">1</div>
+                    <div class="stat-label">INTELECTO</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-pre">1</div>
+                    <div class="stat-label">PRESENÇA</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sheet-sor">1</div>
+                    <div class="stat-label">SORTE</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Contrato Demoníaco</h3>
+                <p id="sheet-demon"><strong>Demônio:</strong> Nenhum</p>
+                <p id="sheet-contract-details">Detalhes do contrato...</p>
+            </div>
+            
+            <div class="form-section">
+                <h3>Equipamento</h3>
+                <div id="sheet-weapons">
+                    <!-- Armas serão listadas aqui -->
+                </div>
+                <p id="sheet-other-equipment"></p>
+            </div>
+            
+            <div class="form-section">
+                <h3>História</h3>
+                <p id="sheet-backstory"></p>
+            </div>
+            
+            <button type="button" id="print-sheet" class="print-button">Imprimir Ficha</button>
+        </div>
+    </div>
+
+    <script>
+        // Controle de Pontos de Atributo
+        let remainingPoints = 12;
+        
+        document.querySelectorAll('.increase-attr').forEach(button => {
+            button.addEventListener('click', function() {
+                const attr = this.getAttribute('data-attr');
+                const input = document.getElementById(attr);
+                if (remainingPoints > 0 && input.value < 4) {
+                    input.value = parseInt(input.value) + 1;
+                    remainingPoints--;
+                    updatePoints();
+                }
+            });
+        });
+        
+        document.querySelectorAll('.decrease-attr').forEach(button => {
+            button.addEventListener('click', function() {
+                const attr = this.getAttribute('data-attr');
+                const input = document.getElementById(attr);
+                if (input.value > 1) {
+                    input.value = parseInt(input.value) - 1;
+                    remainingPoints++;
+                    updatePoints();
+                }
+            });
+        });
+        
+        function updatePoints() {
+            document.getElementById('remaining-points').textContent = remainingPoints;
+        }
+        
+        // Adicionar Armas
+        document.getElementById('add-weapon').addEventListener('click', function() {
+            const weapons = [
+                { name: "Pistola 9mm", damage: "1 ferimento", effect: "Recarga Rápida" },
+                { name: "Soco Inglês", damage: "1 (2 para Lutadores)", effect: "Atordoa em crítico" },
+                { name: "Katana", damage: "1 ferimento", effect: "Corte Limpo (+1 em 6)" },
+                { name: "Escopeta", damage: "2 ferimentos", effect: "Ataque em cone" },
+                { name: "Machado de Caçador", damage: "2 ferimentos", effect: "-1 AGI no próximo turno" }
+            ];
+            
+            const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
+            
+            const weaponHTML = `
+                <div class="weapon-card">
+                    <div class="form-group">
+                        <label>Nome da Arma</label>
+                        <input type="text" value="${randomWeapon.name}" class="weapon-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Dano</label>
+                        <input type="text" value="${randomWeapon.damage}" class="weapon-damage">
+                    </div>
+                    <div class="form-group">
+                        <label>Efeito Especial</label>
+                        <input type="text" value="${randomWeapon.effect}" class="weapon-effect">
+                    </div>
+                    <button type="button" class="remove-weapon add-button" style="background-color: #333;">Remover Arma</button>
+                </div>
+            `;
+            
+            document.getElementById('weapons-container').insertAdjacentHTML('beforeend', weaponHTML);
+            
+            // Adicionar evento de remoção
+            document.querySelectorAll('.remove-weapon').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.parentElement.remove();
+                });
+            });
+        });
+        
+        // Gerar Ficha
+        document.getElementById('character-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Preencher informações básicas
+            document.getElementById('sheet-name').textContent = document.getElementById('character-name').value;
+            document.getElementById('sheet-image').src = document.getElementById('character-image').value || 'https://i.imgur.com/JqYeZ7T.jpg';
+            
+            const originText = document.getElementById('character-origin').options[document.getElementById('character-origin').selectedIndex].text.split(' (')[0];
+            const classText = document.getElementById('character-class').options[document.getElementById('character-class').selectedIndex].text;
+            document.getElementById('sheet-origin-class').textContent = `${originText} • ${classText}`;
+            
+            // Preencher atributos
+            document.getElementById('sheet-for').textContent = document.getElementById('for').value;
+            document.getElementById('sheet-agi').textContent = document.getElementById('agi').value;
+            document.getElementById('sheet-vig').textContent = document.getElementById('vig').value;
+            document.getElementById('sheet-int').textContent = document.getElementById('int').value;
+            document.getElementById('sheet-pre').textContent = document.getElementById('pre').value;
+            document.getElementById('sheet-sor').textContent = document.getElementById('sor').value;
+            
+            // Preencher contrato demoníaco
+            const demonText = document.getElementById('demon-contract').options[document.getElementById('demon-contract').selectedIndex].text;
+            document.getElementById('sheet-demon').innerHTML = `<strong>Demônio:</strong> ${demonText}`;
+            document.getElementById('sheet-contract-details').textContent = document.getElementById('contract-details').value || "Nenhum detalhe adicional fornecido.";
+            
+            // Preencher equipamento
+            const weaponsContainer = document.getElementById('sheet-weapons');
+            weaponsContainer.innerHTML = '';
+            
+            document.querySelectorAll('.weapon-card').forEach(weapon => {
+                const name = weapon.querySelector('.weapon-name').value;
+                const damage = weapon.querySelector('.weapon-damage').value;
+                const effect = weapon.querySelector('.weapon-effect').value;
+                
+                const weaponHTML = `
+                    <p><strong>${name}:</strong> ${damage} (${effect})</p>
+                `;
+                
+                weaponsContainer.insertAdjacentHTML('beforeend', weaponHTML);
+            });
+            
+            const otherEquipment = document.getElementById('other-equipment').value;
+            document.getElementById('sheet-other-equipment').textContent = otherEquipment || "Nenhum equipamento adicional.";
+            
+            // Preencher história
+            document.getElementById('sheet-backstory').textContent = document.getElementById('character-backstory').value || "Nenhuma história fornecida.";
+            
+            // Mostrar ficha
+            document.getElementById('character-sheet').style.display = 'block';
+            window.scrollTo({
+                top: document.getElementById('character-sheet').offsetTop,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Botão de imprimir
+        document.getElementById('print-sheet').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+</body>
+</html>
